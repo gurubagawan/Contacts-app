@@ -32,20 +32,32 @@ class App extends Component {
     super();
     this.state = {
       contacts: [],
+      open: false,
     }
     this.addContact = this.addContact.bind(this)
     this.deleteContact = this.deleteContact.bind(this)
+    this.changeOpen = this.changeOpen.bind(this)
   }
 
   addContact (object) {
     let contactArray = this.state.contacts
     contactArray.push(object)
     this.setState ({
-      contacts: contactArray
+      contacts: contactArray,
     })
+    this.changeOpen()
+    this.printList()
   }
 
-  tempContact(event) {
+  changeOpen() {
+    let isOpen= this.state.open;
+    this.setState({
+      open:!isOpen
+    })
+    this.printList();
+  }
+
+  tempContact() {
     var singleContact =  {
       firstName: document.getElementById('firstname').value,
       lastName: document.getElementById('lastname').value,
@@ -76,7 +88,7 @@ class App extends Component {
           <TableRowColumn>{contact.lastName}</TableRowColumn>
           <TableRowColumn>{contact.number}</TableRowColumn>
           <TableRowColumn>{contact.email}</TableRowColumn>
-          <TableRowColumn> <RaisedButton label="Delete" onClick= {() => this.deleteContact(i)} labelColor='white' backgroundColor='#E53935' /></TableRowColumn>
+          <TableRowColumn> <RaisedButton label="Delete" onClick= {() => this.deleteContact(i)} labelColor='white' backgroundColor='#ed5555' /></TableRowColumn>
         </TableRow>
       )
     })
@@ -94,14 +106,14 @@ class App extends Component {
           <TableHeaderColumn>Last Name </TableHeaderColumn>
           <TableHeaderColumn>Phone Number</TableHeaderColumn>
           <TableHeaderColumn>Email Address </TableHeaderColumn>
-          <TableHeaderColumn/>
+          <TableHeaderColumn> <RaisedButton label="Add New"  labelColor='white' primary={true} onClick={this.changeOpen} /> </TableHeaderColumn>
         </TableRow>
       </TableHeader>
       <TableBody  displayRowCheckbox={false}>
         {contactList}
       </TableBody>
     </Table>
-        <ContactInput />
+        <ContactInput tempContact={this.tempContact} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <p className="App-intro">
           <button onClick= {() => this.tempContact()}> Click me </button>
           <button onClick= {()=> this.printList()}> Print List </button>
