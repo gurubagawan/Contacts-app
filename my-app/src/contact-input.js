@@ -22,7 +22,6 @@ class ContactInput extends Component {
           Email Address:
         <input id='email' type='text'/>
       </div>
-      <button type="submit" form="form1" value="Submit">Submit</button>
       </div>
     )
   }
