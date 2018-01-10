@@ -15,15 +15,9 @@ import {
 } from 'material-ui/Table';
 
 const muiTheme = getMuiTheme({
-  palette: {
-    color: '#E53935',
-  },
   Table: {
     color: '#E53935'
   },
-  stepper: {
-        iconColor: '#E53935'
-    }
 });
 
 
@@ -115,7 +109,7 @@ class App extends Component {
     </Table>
         <ContactInput tempContact={this.tempContact} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <p className="App-intro">
-          <button onClick= {() => this.tempContact()}> Click me </button>
+          <button onClick= {()=> this.tempContact()}> Click me </button>
           <button onClick= {()=> this.printList()}> Print List </button>
         </p>
         </MuiThemeProvider>

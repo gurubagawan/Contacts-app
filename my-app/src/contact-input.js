@@ -15,16 +15,8 @@ class ContactInput extends Component {
   };
   render () {
     const actions = [
-  <FlatButton
-    label="Cancel"
-    primary={true}
-    onClick={() => this.props.changeOpen()}
-  />,
-  <FlatButton
-    label="Submit"
-    primary={true}
-    onClick={()=> this.props.tempContact()}
-  />,
+  <FlatButton label="Cancel"  primary={true} onClick={() => this.props.changeOpen()}/>,
+  <FlatButton label="Submit"  primary={true} onClick={()=> this.props.tempContact()} />,
 ];
     return (
       <div>
