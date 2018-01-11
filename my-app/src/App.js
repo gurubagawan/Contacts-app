@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import ContactInput from './contact-input';
 import RaisedButton from 'material-ui/RaisedButton';
+import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
 import {
   Table,
   TableBody,
@@ -18,6 +19,7 @@ const muiTheme = getMuiTheme({
   Table: {
     color: '#E53935'
   },
+
 });
 
 
@@ -31,6 +33,22 @@ class App extends Component {
     this.addContact = this.addContact.bind(this)
     this.deleteContact = this.deleteContact.bind(this)
     this.changeOpen = this.changeOpen.bind(this)
+    this.sortContacts = this.sortContacts.bind(this)
+  }
+
+  sortContacts(property) {
+    let origList = this.state.contacts
+    function compare(a,b) {
+  if (a[property] < b[property])
+    return -1;
+  if (a[property] > b[property])
+    return 1;
+  return 0;
+}
+let sortedList = origList.sort(compare);
+this.setState({
+  contacts: sortedList
+})
   }
 
   addContact (object) {
@@ -40,7 +58,6 @@ class App extends Component {
       contacts: contactArray,
     })
     this.changeOpen()
-    this.printList()
   }
 
   changeOpen() {
@@ -48,7 +65,6 @@ class App extends Component {
     this.setState({
       open:!isOpen
     })
-    this.printList();
   }
 
   tempContact() {
@@ -59,10 +75,6 @@ class App extends Component {
       number: document.getElementById('phone').value,
     }
     this.addContact(singleContact)
-  }
-
-  printList() {
-    console.log(this.state.contacts)
   }
 
   deleteContact(num) {
@@ -82,24 +94,23 @@ class App extends Component {
           <TableRowColumn>{contact.lastName}</TableRowColumn>
           <TableRowColumn>{contact.number}</TableRowColumn>
           <TableRowColumn>{contact.email}</TableRowColumn>
-          <TableRowColumn> <RaisedButton label="Delete" onClick= {() => this.deleteContact(i)} labelColor='white' backgroundColor='#ed5555' /></TableRowColumn>
+          <TableRowColumn> <RaisedButton label=" Delete " onClick= {() => this.deleteContact(i)} labelColor='white' backgroundColor='#ed5555' /></TableRowColumn>
         </TableRow>
       )
     })
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <header >
+        <AppBar title="My Contacts" />
         </header>
-<MuiThemeProvider muiTheme={muiTheme}>
     <Table>
       <TableHeader displaySelectAll= {false} adjustForCheckbox={false} 	>
         <TableRow selectable='false'>
-          <TableHeaderColumn>First Name </TableHeaderColumn>
-          <TableHeaderColumn>Last Name </TableHeaderColumn>
-          <TableHeaderColumn>Phone Number</TableHeaderColumn>
-          <TableHeaderColumn>Email Address </TableHeaderColumn>
+          <TableHeaderColumn><FlatButton label='First Name' onClick= {() => this.sortContacts("firstName")}/> </TableHeaderColumn>
+          <TableHeaderColumn><FlatButton label='Last Name' onClick= {() => this.sortContacts("lastName")}/>  </TableHeaderColumn>
+          <TableHeaderColumn><FlatButton label='Phone Number' onClick= {() => this.sortContacts("number")}/>  </TableHeaderColumn>
+          <TableHeaderColumn><FlatButton label='Email Address' onClick= {() => this.sortContacts("email")}/>  </TableHeaderColumn>
           <TableHeaderColumn> <RaisedButton label="Add New"  labelColor='white' primary={true} onClick={this.changeOpen} /> </TableHeaderColumn>
         </TableRow>
       </TableHeader>
@@ -109,7 +120,7 @@ class App extends Component {
     </Table>
         <ContactInput tempContact={this.tempContact} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <p className="App-intro">
-          <button onClick= {()=> this.tempContact()}> Click me </button>
+          <button onClick= {()=> this.sortContacts()}> Click me </button>
           <button onClick= {()=> this.printList()}> Print List </button>
         </p>
         </MuiThemeProvider>
