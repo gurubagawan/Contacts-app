@@ -4,6 +4,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
+import ImageUploader from 'react-images-upload';
 
 class ContactInput extends Component {
   render () {
@@ -21,6 +22,13 @@ class ContactInput extends Component {
           <TextField hintText="Phone Number" id='phone' underlineShow={false} />
           <Divider />
           <TextField hintText="Email address" id='email' underlineShow={false} />
+          <ImageUploader id='ConPicture'
+                withIcon={true}
+                buttonText='Add a profile picture'
+                imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                onChange={this.props.onDrop}
+                maxFileSize={5242880}
+            />
           <Divider />
       </Dialog>
       </div>

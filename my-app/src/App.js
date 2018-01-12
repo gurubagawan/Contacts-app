@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import EditContact from './edit-contact';
 import ContactInput from './contact-input';
 import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
@@ -29,11 +30,55 @@ class App extends Component {
     this.state = {
       contacts: [],
       open: false,
+      editingContact: false,
+      currentContact: 0,
     }
     this.addContact = this.addContact.bind(this)
     this.deleteContact = this.deleteContact.bind(this)
     this.changeOpen = this.changeOpen.bind(this)
     this.sortContacts = this.sortContacts.bind(this)
+    this.tempContact = this.tempContact.bind(this)
+    this.printList = this.printList.bind(this)
+    this.onDrop = this.onDrop.bind(this)
+    this.editContact = this.editContact.bind(this)
+    this.handleEditContact = this.handleEditContact.bind(this)
+    this.saveEdit = this.saveEdit.bind(this)
+  }
+
+  //Functions related to Adding a New contact
+
+  //Functions Related to Editing a Contact
+
+  //Functions Related to Deleting Contact
+
+  handleEditContact() {
+    this.setState ({
+      editingContact: !this.state.editingContact,
+    })
+  }
+
+  editContact(num) {
+    this.setState({
+      currentContact: num,
+    });
+    this.handleEditContact();
+  }
+
+  saveEdit() {
+    let location = this.state.currentContact
+    let oldList= this.state.contacts
+    let object =  {
+      firstName: document.getElementById('editFirst').value,
+      lastName: document.getElementById('editLast').value,
+      email: document.getElementById('editEmail').value,
+      number: document.getElementById('editPhone').value,
+      picture: this.state.tempPicture
+    }
+    oldList.splice(location,1,object)
+    this.setState ({
+      contacts: oldList,
+    });
+    this.handleEditContact();
   }
 
   sortContacts(property) {
@@ -50,6 +95,16 @@ this.setState({
   contacts: sortedList
 })
   }
+
+printList() {
+  console.log(this.state.contacts)
+}
+
+  onDrop(picture) {
+    this.setState({
+      tempPicture: picture,
+    });
+}
 
   addContact (object) {
     let contactArray = this.state.contacts
@@ -68,11 +123,12 @@ this.setState({
   }
 
   tempContact() {
-    var singleContact =  {
+    let singleContact =  {
       firstName: document.getElementById('firstname').value,
       lastName: document.getElementById('lastname').value,
       email: document.getElementById('email').value,
       number: document.getElementById('phone').value,
+      picture: this.state.tempPicture
     }
     this.addContact(singleContact)
   }
@@ -94,7 +150,9 @@ this.setState({
           <TableRowColumn>{contact.lastName}</TableRowColumn>
           <TableRowColumn>{contact.number}</TableRowColumn>
           <TableRowColumn>{contact.email}</TableRowColumn>
-          <TableRowColumn> <RaisedButton label=" Delete " onClick= {() => this.deleteContact(i)} labelColor='white' backgroundColor='#ed5555' /></TableRowColumn>
+          <TableRowColumn> <FlatButton label="Edit" primary={true} onClick= {() => this.editContact(i)} />
+          <br/>
+          <FlatButton label="Delete" secondary={true} onClick= {() => this.deleteContact(i)}   /></TableRowColumn>
         </TableRow>
       )
     })
@@ -118,10 +176,12 @@ this.setState({
         {contactList}
       </TableBody>
     </Table>
-        <ContactInput tempContact={this.tempContact} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
+        <ContactInput tempContact={this.tempContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
+        <EditContact editingContact={this.state.editingContact} saveEdit={this.saveEdit} handleEditContact={this.handleEditContact} contact={this.state.contacts[this.state.currentContact]}/>
         <p className="App-intro">
           <button onClick= {()=> this.sortContacts()}> Click me </button>
           <button onClick= {()=> this.printList()}> Print List </button>
+
         </p>
         </MuiThemeProvider>
       </div>
