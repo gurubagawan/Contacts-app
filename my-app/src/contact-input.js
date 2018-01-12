@@ -9,7 +9,7 @@ import ImageUploader from 'react-images-upload';
 class ContactInput extends Component {
   render () {
     const actions = [
-  <FlatButton label="Cancel"  primary={true} onClick={() => this.props.changeOpen()}/>,
+  <FlatButton label="Cancel"  secondary={true} onClick={() => this.props.changeOpen()}/>,
   <FlatButton label="Submit"  primary={true} onClick={()=> this.props.addContact()}/>,
 ];
     return (

@@ -11,13 +11,13 @@ class EditContact extends Component {
     var thisContact = this.props.contact
     console.log(this.props.editingContact)
     const actions = [
-  <FlatButton label="Cancel"  primary={true} onClick={() => this.props.handleEditContact()}/>,
+  <FlatButton secondary={true} label="Cancel" onClick={() => this.props.handleEditContact()}/>,
   <FlatButton label="Save"  primary={true} onClick={()=> this.props.saveEdit()}/>,
 ];
     return (
       <div>
       <Dialog title="Modify Contact" actions={actions} modal={true} open={this.props.editingContact} >
-          <TextField hintText='Your friend must have a name' defaultValue={thisContact ?  thisContact.firstName : 'blank'} id='editFirst' underlineShow={false} />
+          <TextField hintText='Your friend must have a name' defaultValue={thisContact ?  thisContact.firstName : ''} id='editFirst' underlineShow={false} />
           <Divider />
           <TextField hintText="Add a last name" defaultValue={thisContact ?  thisContact.lastName : '' } id='editLast' underlineShow={false} />
           <Divider />

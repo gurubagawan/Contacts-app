@@ -23,7 +23,6 @@ const muiTheme = getMuiTheme({
 
 });
 
-
 class App extends Component {
   constructor () {
     super();
@@ -37,7 +36,6 @@ class App extends Component {
     this.deleteContact = this.deleteContact.bind(this)
     this.changeOpen = this.changeOpen.bind(this)
     this.sortContacts = this.sortContacts.bind(this)
-    //this.tempContact = this.tempContact.bind(this)
     this.printList = this.printList.bind(this)
     this.onDrop = this.onDrop.bind(this)
     this.editContact = this.editContact.bind(this)
@@ -62,23 +60,12 @@ class App extends Component {
     this.changeOpen()
   }
 
+  //Opens/closes box to add new contact. Useful to keep as seperate function, so it can be called on it's own when necessary
   changeOpen() {
-    let isOpen= this.state.open;
     this.setState({
-      open:!isOpen
+      open:!(this.state.open)
     })
   }
-
-  // tempContact() {
-  //   let singleContact =  {
-  //     firstName: document.getElementById('firstname').value,
-  //     lastName: document.getElementById('lastname').value,
-  //     email: document.getElementById('email').value,
-  //     number: document.getElementById('phone').value,
-  //     picture: this.state.tempPicture
-  //   }
-  //   this.addContact(singleContact)
-  // }
 
   //Functions Related to Editing a Contact
   handleEditContact() {
@@ -148,8 +135,6 @@ printList() {
     });
 }
 
-
-
   render() {
     let mycontacts = this.state.contacts
     console.log(mycontacts)
@@ -191,7 +176,6 @@ printList() {
         <p className="App-intro">
           <button onClick= {()=> this.sortContacts()}> Click me </button>
           <button onClick= {()=> this.printList()}> Print List </button>
-
         </p>
         </MuiThemeProvider>
       </div>
