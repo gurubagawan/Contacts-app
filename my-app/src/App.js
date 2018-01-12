@@ -37,7 +37,7 @@ class App extends Component {
     this.deleteContact = this.deleteContact.bind(this)
     this.changeOpen = this.changeOpen.bind(this)
     this.sortContacts = this.sortContacts.bind(this)
-    this.tempContact = this.tempContact.bind(this)
+    //this.tempContact = this.tempContact.bind(this)
     this.printList = this.printList.bind(this)
     this.onDrop = this.onDrop.bind(this)
     this.editContact = this.editContact.bind(this)
@@ -46,11 +46,41 @@ class App extends Component {
   }
 
   //Functions related to Adding a New contact
+  addContact (object) {
+    let contactArray = this.state.contacts
+    let singleContact =  {
+      firstName: document.getElementById('firstname').value,
+      lastName: document.getElementById('lastname').value,
+      email: document.getElementById('email').value,
+      number: document.getElementById('phone').value,
+      picture: this.state.tempPicture
+    }
+    contactArray.push(singleContact)
+    this.setState ({
+      contacts: contactArray,
+    })
+    this.changeOpen()
+  }
+
+  changeOpen() {
+    let isOpen= this.state.open;
+    this.setState({
+      open:!isOpen
+    })
+  }
+
+  // tempContact() {
+  //   let singleContact =  {
+  //     firstName: document.getElementById('firstname').value,
+  //     lastName: document.getElementById('lastname').value,
+  //     email: document.getElementById('email').value,
+  //     number: document.getElementById('phone').value,
+  //     picture: this.state.tempPicture
+  //   }
+  //   this.addContact(singleContact)
+  // }
 
   //Functions Related to Editing a Contact
-
-  //Functions Related to Deleting Contact
-
   handleEditContact() {
     this.setState ({
       editingContact: !this.state.editingContact,
@@ -81,6 +111,17 @@ class App extends Component {
     this.handleEditContact();
   }
 
+
+  //Functions Related to Deleting Contact
+  deleteContact(num) {
+    let shortList = this.state.contacts
+    shortList.splice(num, 1)
+    this.setState({
+      contacts: shortList
+    })
+  }
+
+//Misceallaneous functions that stand on their own
   sortContacts(property) {
     let origList = this.state.contacts
     function compare(a,b) {
@@ -96,6 +137,7 @@ this.setState({
 })
   }
 
+//Good quick function useful in troubleshooting
 printList() {
   console.log(this.state.contacts)
 }
@@ -106,43 +148,11 @@ printList() {
     });
 }
 
-  addContact (object) {
-    let contactArray = this.state.contacts
-    contactArray.push(object)
-    this.setState ({
-      contacts: contactArray,
-    })
-    this.changeOpen()
-  }
 
-  changeOpen() {
-    let isOpen= this.state.open;
-    this.setState({
-      open:!isOpen
-    })
-  }
-
-  tempContact() {
-    let singleContact =  {
-      firstName: document.getElementById('firstname').value,
-      lastName: document.getElementById('lastname').value,
-      email: document.getElementById('email').value,
-      number: document.getElementById('phone').value,
-      picture: this.state.tempPicture
-    }
-    this.addContact(singleContact)
-  }
-
-  deleteContact(num) {
-    let shortList = this.state.contacts
-    shortList.splice(num, 1)
-    this.setState({
-      contacts: shortList
-    })
-  }
 
   render() {
     let mycontacts = this.state.contacts
+    console.log(mycontacts)
     const contactList = mycontacts.map ((contact, i) => {
       return (
         <TableRow key ={i}>
@@ -176,7 +186,7 @@ printList() {
         {contactList}
       </TableBody>
     </Table>
-        <ContactInput tempContact={this.tempContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
+        <ContactInput addContact={this.addContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <EditContact editingContact={this.state.editingContact} saveEdit={this.saveEdit} handleEditContact={this.handleEditContact} contact={this.state.contacts[this.state.currentContact]}/>
         <p className="App-intro">
           <button onClick= {()=> this.sortContacts()}> Click me </button>
