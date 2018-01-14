@@ -24,13 +24,6 @@ class EditContact extends Component {
           <TextField hintText='Add a phone number' defaultValue={thisContact ?  thisContact.number : '' } id='editPhone' underlineShow={false} />
           <Divider />
           <TextField hintText='Add an email address' defaultValue={thisContact ?  thisContact.email : ''} id='editEmail' underlineShow={false} />
-          <ImageUploader id='ConPicture'
-                withIcon={true}
-                buttonText='Add a profile picture'
-                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                onChange={this.props.onDrop}
-                maxFileSize={5242880}
-            />
           <Divider />
       </Dialog>
       </div>

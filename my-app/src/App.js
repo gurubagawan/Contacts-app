@@ -23,9 +23,7 @@ const muiTheme = getMuiTheme({
   Table: {
     color: '#E53935'
   },
-
 });
-
 
 class App extends Component {
   constructor () {
@@ -36,8 +34,7 @@ class App extends Component {
       editingContact: false,
       currentContact: 1,
       user: null,
-
-    }
+    };
     this.addContact = this.addContact.bind(this);
     this.deleteContact = this.deleteContact.bind(this);
     this.changeOpen = this.changeOpen.bind(this);
@@ -52,36 +49,39 @@ class App extends Component {
     this.signUp = this.signUp.bind(this);
     this.saveToFireBase = this.saveToFireBase.bind(this);
     this.loadContacts = this.loadContacts.bind(this);
-  }
+  };
 
   //Functions for login/out
-  handleChange(e) {
-  /* ... */
-  }
   logout() {
     auth.signOut()
       .then(() => {
         this.setState({
-          user: null
+          user: null,
+          contacts: []
         });
       });
-  }
+  };
   login() {
     let email = document.getElementById('loginEmail').value
     let password = document.getElementById('loginPassword').value
-    //console.log(email, password)
     const promise = auth.signInWithEmailAndPassword(email, password);
     promise
       .then(user => {
       this.setState({
-        user: user
+        user: user,
+        errorMessage: null
       })
       this.loadContacts()
     })
-      .catch (e=> console.log(e.message))
+      .catch (e=> {
+        let message= e.message
+        console.log(message)
+        this.setState ({
+          errorMessage: message
+        })
+      })
 
-
-  }
+  };
 
   signUp() {
     let email = document.getElementById('loginEmail').value
@@ -92,49 +92,55 @@ class App extends Component {
       .then(user => {
       console.log(user)
       this.setState({
-        user: user
+        user: user,
+        errorMessage: null,
       })
     })
-      .catch (e=> console.log(e.message))
-  }
-
+      .catch (e=> {
+        let message= e.message
+        console.log(message)
+        this.setState ({
+          errorMessage: message
+        })
+      })
+  };
 
   //Functions related to Adding a New contact
   addContact (object) {
-    let contactArray = this.state.contacts
+    let contactArray = this.state.contacts;
     let singleContact =  {
       firstName: document.getElementById('firstname').value,
       lastName: document.getElementById('lastname').value,
       email: document.getElementById('email').value,
       number: document.getElementById('phone').value,
-    }
+    };
     contactArray.push(singleContact)
     this.setState ({
       contacts: contactArray,
-    })
+    });
     this.changeOpen()
-  }
+  };
 
   //Opens/closes box to add new contact. Useful to keep as seperate function, so it can be called on it's own when necessary
   changeOpen() {
     this.setState({
       open:!(this.state.open)
     })
-  }
+  };
 
   //Functions Related to Editing a Contact
   handleEditContact() {
     this.setState ({
       editingContact: !this.state.editingContact,
-    })
-  }
+    });
+  };
 
   editContact(num) {
     this.setState({
       currentContact: num,
     });
     this.handleEditContact();
-  }
+  };
 
   saveEdit() {
     let location = this.state.currentContact
@@ -144,14 +150,13 @@ class App extends Component {
       lastName: document.getElementById('editLast').value,
       email: document.getElementById('editEmail').value,
       number: document.getElementById('editPhone').value,
-    }
+    };
     oldList.splice(location,1,object)
     this.setState ({
       contacts: oldList,
     });
     this.handleEditContact();
-  }
-
+  };
 
   //Functions Related to Deleting Contact
   deleteContact(num) {
@@ -159,8 +164,8 @@ class App extends Component {
     shortList.splice(num, 1)
     this.setState({
       contacts: shortList
-    })
-  }
+    });
+  };
 
 //Misceallaneous functions that stand on their own
   sortContacts(property) {
@@ -171,23 +176,23 @@ class App extends Component {
   if (a[property] > b[property])
     return 1;
   return 0;
-}
+};
 let sortedList = origList.sort(compare);
 this.setState({
   contacts: sortedList
-})
-  }
+});
+};
 
 //Good quick function useful in troubleshooting
 printList() {
   console.log(this.state.contacts)
-}
+};
 
   onDrop(picture) {
     this.setState({
       tempPicture: picture,
     });
-}
+};
 
 saveToFireBase() {
   let contactsToSave = this.state.contacts
@@ -196,8 +201,9 @@ saveToFireBase() {
   //firebase.database().ref(user.tostring)
   for (let i=0; i<contactsToSave.length; i++) {
   userBase.set(contactsToSave)
-}
-}
+};
+this.logout();
+};
 
 loadContacts() {
   //if (this.state.user){
@@ -221,15 +227,20 @@ loadContacts() {
     }
     this.setState({
       contacts: userContacts
-    })
-    // console.log(Object.keys(response).length)
-    // console.log(response.contact1)
-    // console.log(userContacts)
+    });
   });
-  console.log(this.state.contacts)
-//}
 }
-//}
+
+componentDidMount() {
+     auth.onAuthStateChanged ((user)=> {
+       if (user){
+         this.setState({
+           user: user
+         })
+      this.loadContacts();
+       }
+     })
+};
 
   render() {
     let mycontacts = this.state.contacts
@@ -267,17 +278,11 @@ loadContacts() {
         {contactList}
       </TableBody>
     </Table>
-        <LoginField login={this.login} user={this.state.user} signUp={this.signUp}/>
+        <LoginField login={this.login} error={this.state.errorMessage} user={this.state.user} signUp={this.signUp}/>
         <ContactInput addContact={this.addContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <EditContact editingContact={this.state.editingContact} saveEdit={this.saveEdit} handleEditContact={this.handleEditContact} contact={this.state.contacts[this.state.currentContact]}/>
-        <p className="App-intro">
-          <button onClick= {()=> this.sortContacts()}> Click me </button>
-          <button onClick= {()=> this.printList()}> Print List </button>
-        </p>
+          <br/> <RaisedButton secondary={true} onClick= {()=> this.saveToFireBase()}> Log Out</RaisedButton>
         </MuiThemeProvider>
-  <button onClick={this.saveToFireBase}> Save to Firebase </button>
-}
-
       </div>
 
     );

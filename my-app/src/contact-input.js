@@ -22,13 +22,6 @@ class ContactInput extends Component {
           <TextField hintText="Phone Number" id='phone' underlineShow={false} />
           <Divider />
           <TextField hintText="Email address" id='email' underlineShow={false} />
-          <ImageUploader id='ConPicture'
-                withIcon={true}
-                buttonText='Add a profile picture'
-                imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                onChange={this.props.onDrop}
-                maxFileSize={5242880}
-            />
           <Divider />
       </Dialog>
       </div>

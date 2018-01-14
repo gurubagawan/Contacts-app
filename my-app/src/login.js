@@ -8,15 +8,18 @@ import TextField from 'material-ui/TextField';
 class LoginField extends Component {
   render () {
     const actions = [
-  <FlatButton secondary={true} label="Log In" onClick={() => this.props.login()}/>,
-  <FlatButton secondary={true} label="Sign Up" onClick={() => this.props.signUp()}/>
+  <FlatButton  label="Log In" onClick={() => this.props.login()}/>,
+  <FlatButton  label="Sign Up" onClick={() => this.props.signUp()}/>
 ];
     return (
       <div>
       <Dialog title="Login" actions={actions} modal={true} open={!(this.props.user)} >
           <TextField hintText='Email' id='loginEmail' underlineShow={false} />
           <Divider />
-          <TextField hintText="Password" id='loginPassword' underlineShow={false} />
+          <TextField hintText="Password" type='password' id='loginPassword' underlineShow={false} />
+          { this.props.error ?
+            <div> <br/> <font color="red">{this.props.error} </font> </div>
+            : '' }
       </Dialog>
       </div>
     )
