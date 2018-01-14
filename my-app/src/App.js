@@ -8,7 +8,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import * as firebase from 'firebase';
-import { auth, provider } from './index.js';
+import { auth, provider } from './index';
+import LoginField from './login'
 import {
   Table,
   TableBody,
@@ -24,8 +25,6 @@ const muiTheme = getMuiTheme({
   },
 
 });
-
-
 
 
 class App extends Component {
@@ -50,6 +49,9 @@ class App extends Component {
     this.saveEdit = this.saveEdit.bind(this);
     this.login = this.login.bind (this);
     this.logout = this.logout.bind(this);
+    this.signUp = this.signUp.bind(this);
+    this.saveToFireBase = this.saveToFireBase.bind(this);
+    this.loadContacts = this.loadContacts.bind(this);
   }
 
   //Functions for login/out
@@ -65,13 +67,35 @@ class App extends Component {
       });
   }
   login() {
-  auth.signInWithPopup(provider)
-    .then((result) => {
-      const user = result.user;
+    let email = document.getElementById('loginEmail').value
+    let password = document.getElementById('loginPassword').value
+    //console.log(email, password)
+    const promise = auth.signInWithEmailAndPassword(email, password);
+    promise
+      .then(user => {
       this.setState({
-        user
-      });
-    });
+        user: user
+      })
+      this.loadContacts()
+    })
+      .catch (e=> console.log(e.message))
+
+
+  }
+
+  signUp() {
+    let email = document.getElementById('loginEmail').value
+    let password = document.getElementById('loginPassword').value
+    //console.log(email, password)
+    const promise = auth.createUserWithEmailAndPassword(email, password);
+    promise
+      .then(user => {
+      console.log(user)
+      this.setState({
+        user: user
+      })
+    })
+      .catch (e=> console.log(e.message))
   }
 
 
@@ -83,7 +107,6 @@ class App extends Component {
       lastName: document.getElementById('lastname').value,
       email: document.getElementById('email').value,
       number: document.getElementById('phone').value,
-      picture: this.state.tempPicture
     }
     contactArray.push(singleContact)
     this.setState ({
@@ -121,7 +144,6 @@ class App extends Component {
       lastName: document.getElementById('editLast').value,
       email: document.getElementById('editEmail').value,
       number: document.getElementById('editPhone').value,
-      picture: this.state.tempPicture
     }
     oldList.splice(location,1,object)
     this.setState ({
@@ -167,21 +189,47 @@ printList() {
     });
 }
 
-componentDidMount() {
-  const rootRef = firebase.database().ref().child('array');
-  const user1= rootRef.child('user1')
-
-
-  const currentRef = rootRef.child('current');
-  currentRef.on('value', snap => {
-    this.setState ({
-      currentContact: snap.val()
-    });
-    console.log(snap.val())
-    console.log('starte')
-  });
-
+saveToFireBase() {
+  let contactsToSave = this.state.contacts
+  let user = this.state.user
+  const userBase = firebase.database().ref().child(String(user.uid));
+  //firebase.database().ref(user.tostring)
+  for (let i=0; i<contactsToSave.length; i++) {
+  userBase.set(contactsToSave)
 }
+}
+
+loadContacts() {
+  //if (this.state.user){
+    console.log('after user')
+  let user = this.state.user
+  const rootRef = firebase.database().ref().child(user.uid);
+  //console.log(rootRef)
+  //if (rootRef.hasOwnProperty()) {
+    console.log('after first if')
+  rootRef.on('value', snap => {
+    let userContacts = []
+    let response = snap.val()
+    let length = Object.keys(response).length
+    for (var key in response) {
+  // skip loop if the property is from prototype
+    if (!response.hasOwnProperty(key)) continue;
+    console.log('after second if')
+    var obj = response[key];
+    //console.log(obj)
+    userContacts.push(obj)
+    }
+    this.setState({
+      contacts: userContacts
+    })
+    // console.log(Object.keys(response).length)
+    // console.log(response.contact1)
+    // console.log(userContacts)
+  });
+  console.log(this.state.contacts)
+//}
+}
+//}
 
   render() {
     let mycontacts = this.state.contacts
@@ -219,6 +267,7 @@ componentDidMount() {
         {contactList}
       </TableBody>
     </Table>
+        <LoginField login={this.login} user={this.state.user} signUp={this.signUp}/>
         <ContactInput addContact={this.addContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <EditContact editingContact={this.state.editingContact} saveEdit={this.saveEdit} handleEditContact={this.handleEditContact} contact={this.state.contacts[this.state.currentContact]}/>
         <p className="App-intro">
@@ -226,13 +275,9 @@ componentDidMount() {
           <button onClick= {()=> this.printList()}> Print List </button>
         </p>
         </MuiThemeProvider>
-        {this.state.user ?
-  <button onClick={this.logout}>Log Out</button>
-  :
-  <button onClick={this.login}>Log In</button>
+  <button onClick={this.saveToFireBase}> Save to Firebase </button>
 }
 
-        <h2>{this.state.currentContact} </h2>
       </div>
 
     );
