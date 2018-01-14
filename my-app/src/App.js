@@ -8,7 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import * as firebase from 'firebase';
-import { auth, provider } from './index';
+import { auth} from './index';
 import LoginField from './login'
 import {
   Table,
@@ -86,11 +86,9 @@ class App extends Component {
   signUp() {
     let email = document.getElementById('loginEmail').value
     let password = document.getElementById('loginPassword').value
-    //console.log(email, password)
     const promise = auth.createUserWithEmailAndPassword(email, password);
     promise
       .then(user => {
-      console.log(user)
       this.setState({
         user: user,
         errorMessage: null,
@@ -98,7 +96,6 @@ class App extends Component {
     })
       .catch (e=> {
         let message= e.message
-        console.log(message)
         this.setState ({
           errorMessage: message
         })
@@ -198,7 +195,6 @@ saveToFireBase() {
   let contactsToSave = this.state.contacts
   let user = this.state.user
   const userBase = firebase.database().ref().child(String(user.uid));
-  //firebase.database().ref(user.tostring)
   for (let i=0; i<contactsToSave.length; i++) {
   userBase.set(contactsToSave)
 };
@@ -206,23 +202,15 @@ this.logout();
 };
 
 loadContacts() {
-  //if (this.state.user){
-    console.log('after user')
   let user = this.state.user
   const rootRef = firebase.database().ref().child(user.uid);
-  //console.log(rootRef)
-  //if (rootRef.hasOwnProperty()) {
-    console.log('after first if')
   rootRef.on('value', snap => {
     let userContacts = []
     let response = snap.val()
-    let length = Object.keys(response).length
     for (var key in response) {
   // skip loop if the property is from prototype
     if (!response.hasOwnProperty(key)) continue;
-    console.log('after second if')
     var obj = response[key];
-    //console.log(obj)
     userContacts.push(obj)
     }
     this.setState({
@@ -244,7 +232,7 @@ componentDidMount() {
 
   render() {
     let mycontacts = this.state.contacts
-    console.log(mycontacts)
+    //console.log(mycontacts)
     const contactList = mycontacts.map ((contact, i) => {
       return (
         <TableRow key ={i}>
@@ -266,7 +254,7 @@ componentDidMount() {
         </header>
     <Table>
       <TableHeader displaySelectAll= {false} adjustForCheckbox={false} 	>
-        <TableRow selectable='false'>
+        <TableRow selectable={false}>
           <TableHeaderColumn><FlatButton label='First Name' onClick= {() => this.sortContacts("firstName")}/> </TableHeaderColumn>
           <TableHeaderColumn><FlatButton label='Last Name' onClick= {() => this.sortContacts("lastName")}/>  </TableHeaderColumn>
           <TableHeaderColumn><FlatButton label='Phone Number' onClick= {() => this.sortContacts("number")}/>  </TableHeaderColumn>
@@ -279,7 +267,7 @@ componentDidMount() {
       </TableBody>
     </Table>
         <LoginField login={this.login} error={this.state.errorMessage} user={this.state.user} signUp={this.signUp}/>
-        <ContactInput addContact={this.addContact} onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
+        <ContactInput onDrop={this.onDrop} changeOpen={this.changeOpen} addContact={this.addContact} open={this.state.open} contacts={this.state.contacts}/>
         <EditContact editingContact={this.state.editingContact} saveEdit={this.saveEdit} handleEditContact={this.handleEditContact} contact={this.state.contacts[this.state.currentContact]}/>
           <br/> <RaisedButton secondary={true} onClick= {()=> this.saveToFireBase()}> Log Out</RaisedButton>
         </MuiThemeProvider>

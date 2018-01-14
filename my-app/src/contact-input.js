@@ -4,7 +4,6 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Divider from 'material-ui/Divider';
 import TextField from 'material-ui/TextField';
-import ImageUploader from 'react-images-upload';
 
 class ContactInput extends Component {
   render () {
