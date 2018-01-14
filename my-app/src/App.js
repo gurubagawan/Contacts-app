@@ -7,6 +7,8 @@ import ContactInput from './contact-input';
 import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
+import * as firebase from 'firebase';
+import { auth, provider } from './index.js';
 import {
   Table,
   TableBody,
@@ -23,6 +25,9 @@ const muiTheme = getMuiTheme({
 
 });
 
+
+
+
 class App extends Component {
   constructor () {
     super();
@@ -30,18 +35,45 @@ class App extends Component {
       contacts: [],
       open: false,
       editingContact: false,
-      currentContact: 0,
+      currentContact: 1,
+      user: null,
+
     }
-    this.addContact = this.addContact.bind(this)
-    this.deleteContact = this.deleteContact.bind(this)
-    this.changeOpen = this.changeOpen.bind(this)
-    this.sortContacts = this.sortContacts.bind(this)
-    this.printList = this.printList.bind(this)
-    this.onDrop = this.onDrop.bind(this)
-    this.editContact = this.editContact.bind(this)
-    this.handleEditContact = this.handleEditContact.bind(this)
-    this.saveEdit = this.saveEdit.bind(this)
+    this.addContact = this.addContact.bind(this);
+    this.deleteContact = this.deleteContact.bind(this);
+    this.changeOpen = this.changeOpen.bind(this);
+    this.sortContacts = this.sortContacts.bind(this);
+    this.printList = this.printList.bind(this);
+    this.onDrop = this.onDrop.bind(this);
+    this.editContact = this.editContact.bind(this);
+    this.handleEditContact = this.handleEditContact.bind(this);
+    this.saveEdit = this.saveEdit.bind(this);
+    this.login = this.login.bind (this);
+    this.logout = this.logout.bind(this);
   }
+
+  //Functions for login/out
+  handleChange(e) {
+  /* ... */
+  }
+  logout() {
+    auth.signOut()
+      .then(() => {
+        this.setState({
+          user: null
+        });
+      });
+  }
+  login() {
+  auth.signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      this.setState({
+        user
+      });
+    });
+  }
+
 
   //Functions related to Adding a New contact
   addContact (object) {
@@ -135,6 +167,22 @@ printList() {
     });
 }
 
+componentDidMount() {
+  const rootRef = firebase.database().ref().child('array');
+  const user1= rootRef.child('user1')
+
+
+  const currentRef = rootRef.child('current');
+  currentRef.on('value', snap => {
+    this.setState ({
+      currentContact: snap.val()
+    });
+    console.log(snap.val())
+    console.log('starte')
+  });
+
+}
+
   render() {
     let mycontacts = this.state.contacts
     console.log(mycontacts)
@@ -178,6 +226,13 @@ printList() {
           <button onClick= {()=> this.printList()}> Print List </button>
         </p>
         </MuiThemeProvider>
+        {this.state.user ?
+  <button onClick={this.logout}>Log Out</button>
+  :
+  <button onClick={this.login}>Log In</button>
+}
+
+        <h2>{this.state.currentContact} </h2>
       </div>
 
     );

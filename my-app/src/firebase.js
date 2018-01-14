@@ -1,11 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 
-var config = {
+const config = {
   apiKey: "AIzaSyBSBZjOzN_29TyYXvHmxwdDKaXZt5OH_Ns",
   authDomain: "inkblot-683ed.firebaseapp.com",
   databaseURL: "https://inkblot-683ed.firebaseio.com",
@@ -14,11 +9,9 @@ var config = {
   messagingSenderId: "440147040063"
 };
 
-firebase.initializeApp(config);
-// export default firebase;
 
 export const provider = new firebase.auth.GoogleAuthProvider();
 export const auth = firebase.auth();
 
-ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+firebase.initializeApp(config);
+export default firebase;
