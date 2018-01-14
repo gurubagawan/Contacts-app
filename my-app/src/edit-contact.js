@@ -7,8 +7,7 @@ import TextField from 'material-ui/TextField';
 
 class EditContact extends Component {
   render () {
-    var thisContact = this.props.contact
-    console.log(this.props.editingContact)
+    var thisContact = this.props.contact; 
     const actions = [
   <FlatButton secondary={true} label="Cancel" onClick={() => this.props.handleEditContact()}/>,
   <FlatButton label="Save"  primary={true} onClick={()=> this.props.saveEdit()}/>,
